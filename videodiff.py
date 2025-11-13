@@ -69,7 +69,7 @@ def main():
 
     args = parser.parse_args()
 
-    filelen = len(args.file)
+    files = args.file or []
     mode = args.mode
     if args.output is not None: 
         if not path.exists(args.output):
@@ -85,11 +85,16 @@ def main():
             exit(1)
 
     if args.mode == "dithering":
-        if len(args.file) > 1:
-            print("Only one file is allowed")
-            exit(1)
-        file = args.file[0]
-        source = args.cap if args.cap is not None else file
+        if args.cap is not None:
+            source = args.cap
+        else:
+            if not files:
+                print("Need one file for dithering mode when --cap is not provided")
+                exit(1)
+            if len(files) > 1:
+                print("Only one file is allowed for dithering mode")
+                exit(1)
+            source = files[0]
         video = SimpleDither(
             source,
             fill_value=args.fill_value,
@@ -99,11 +104,11 @@ def main():
         video.process(display=args.display, output_path=args.output)
 
     if args.mode == 'image':
-        if len(args.file) != 2:
+        if len(files) != 2:
             print("Need two files for image differentiation mode")
             exit(1)
         image = ImageDiff(
-                args.file,
+                files,
                 fill_value=args.fill_value,
                 state=args.dither_method,
         )
