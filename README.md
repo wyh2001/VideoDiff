@@ -13,7 +13,7 @@ Documentation is incomplete and more work needs to be done
 
 ```
 usage: videodiff.py [-h] [--fill-value FILL_VALUE]
-                   [--dither-method {r,g,b,m,n}] [--display] [--output OUTPUT]
+                   [--dither-method {r,g,b,a,m,n}] [--display] [--output OUTPUT]
                    [--cap CAP | --file FILE]
 
 Compare frames from a video or capture device
@@ -23,18 +23,22 @@ optional arguments:
   --fill-value FILL_VALUE
                         Used with mask method, fill value for detected image
                         changes.
-  --dither-method {r,g,b,m,n}, -x {r,g,b,m,n}
+  --dither-method {r,g,b,a,m,n}, -x {r,g,b,a,m,n}
                         Dither detection method
   --display, -d
   --output OUTPUT, -o OUTPUT
-                        Output file, must be .avi format
+                        Output directory for sequential image output
   --cap CAP             Index value of cv2.VideoCapture device
   --file FILE           Path to AVI file to use instead of a video device
 ```
 
+Capture tuning options (mainly for `--cap`): `--backend`, `--fourcc`, `--width`, `--height`, `--fps`.
+
+Example (1080p60, YUY2, DirectShow): `python videodiff.py --cap 1 --backend dshow --fourcc YUY2 --width 1920 --height 1080 --fps 60 -d`
+
 ## Requirements
 
-- Python >= 3.4
+- Python >= 3.8
 - NumPy
 - OpenCV with Python bindings
 - ffmpeg (need to test how library linking works)
