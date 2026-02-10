@@ -2,7 +2,7 @@
 # https://github.com/damnever/pigar
 
 # util/video.py: 2
-numpy == 1.22.0
+numpy >= 1.22.0
 
 # util/video.py: 1
-opencv_python == 4.11.0.86
+opencv_python >= 4.11.0.86

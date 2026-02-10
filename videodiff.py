@@ -50,6 +50,33 @@ def main():
             default=False,
             help="Whether to pause at start"
             )
+    parser.add_argument(
+            "--width",
+            type=int,
+            help="Requested capture width (mainly for --cap)",
+            )
+    parser.add_argument(
+            "--height",
+            type=int,
+            help="Requested capture height (mainly for --cap)",
+            )
+    parser.add_argument(
+            "--fps",
+            type=float,
+            help="Requested capture fps (mainly for --cap)",
+            )
+    parser.add_argument(
+            "--fourcc",
+            type=str,
+            help="Requested capture FOURCC (e.g. MJPG, YUY2, H264)",
+            )
+    parser.add_argument(
+            "--backend",
+            type=str,
+            default="any",
+            choices=("any", "msmf", "dshow", "ffmpeg", "gstreamer", "v4l2"),
+            help="VideoCapture backend preference",
+            )
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
             "--cap",
@@ -100,6 +127,11 @@ def main():
             fill_value=args.fill_value,
             state=args.dither_method,
             framebyframe=args.pause,
+            width=args.width,
+            height=args.height,
+            fps=args.fps,
+            fourcc=args.fourcc,
+            backend=args.backend,
         )
         video.process(display=args.display, output_path=args.output)
 

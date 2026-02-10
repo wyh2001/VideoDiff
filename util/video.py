@@ -1,15 +1,47 @@
 import cv2
 import numpy as np
 import util.common as common
-from numpy import asarray
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+
+def backend_id_from_name(name):
+    backend_map = {
+        "any": getattr(cv2, "CAP_ANY", 0),
+        "msmf": getattr(cv2, "CAP_MSMF", None),
+        "dshow": getattr(cv2, "CAP_DSHOW", None),
+        "ffmpeg": getattr(cv2, "CAP_FFMPEG", None),
+        "gstreamer": getattr(cv2, "CAP_GSTREAMER", None),
+        "v4l2": getattr(cv2, "CAP_V4L2", None),
+    }
+    backend_id = backend_map.get(name, getattr(cv2, "CAP_ANY", 0))
+    if backend_id is None:
+        backend_id = getattr(cv2, "CAP_ANY", 0)
+    return backend_id
+
+
+def decode_fourcc(value):
+    value_int = int(value)
+    return "".join([chr((value_int >> (8 * i)) & 0xFF) for i in range(4)])
+
+
 class VideoDiff:
-    def __init__(self, source):
-        self.cap = cv2.VideoCapture(source)
+    def __init__(self, source, backend=None, width=None, height=None, fps=None, fourcc=None):
+        self.cap = cv2.VideoCapture(source, backend) if backend is not None else cv2.VideoCapture(source)
         self.windowname = None
         self._tdict = {}
         self._tpe = ThreadPoolExecutor()
+        self._printed_stream_info = False
+
+        if fourcc is not None:
+            if len(fourcc) != 4:
+                raise ValueError("fourcc must be exactly 4 characters (e.g. MJPG, YUY2)")
+            self.cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*fourcc.upper()))
+        if width is not None:
+            self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, int(width))
+        if height is not None:
+            self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, int(height))
+        if fps is not None:
+            self.cap.set(cv2.CAP_PROP_FPS, float(fps))
 
 
     def __del__(self):
@@ -48,8 +80,15 @@ class VideoDiff:
 
 
 class SimpleDither(VideoDiff):
-    def __init__(self, source, fill_value=0, state="g", framebyframe=False):
-        super(SimpleDither, self).__init__(source=source)
+    def __init__(self, source, fill_value=0, state="g", framebyframe=False, width=None, height=None, fps=None, fourcc=None, backend="any"):
+        super(SimpleDither, self).__init__(
+            source=source,
+            backend=backend_id_from_name(backend),
+            width=width,
+            height=height,
+            fps=fps,
+            fourcc=fourcc,
+        )
         self.windowname = "SimpleDither"
         self.fill_value = fill_value
         self.state = state
@@ -148,6 +187,30 @@ class SimpleDither(VideoDiff):
             # Capture frame-by-frame
             ret, frame = capture_source.read()
             if ret is True:
+                if not self._printed_stream_info:
+                    fourcc_int = int(capture_source.get(cv2.CAP_PROP_FOURCC))
+                    fourcc_str = decode_fourcc(fourcc_int)
+                    try:
+                        backend = capture_source.getBackendName()
+                    except Exception:
+                        backend = "unknown"
+
+                    width = int(capture_source.get(cv2.CAP_PROP_FRAME_WIDTH))
+                    height = int(capture_source.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                    fps = capture_source.get(cv2.CAP_PROP_FPS)
+                    print(
+                        "stream backend={} fourcc={} size={}x{} fps={} frame={} dtype={}".format(
+                            backend,
+                            repr(fourcc_str),
+                            width,
+                            height,
+                            fps,
+                            frame.shape,
+                            frame.dtype,
+                        )
+                    )
+                    self._printed_stream_info = True
+
                 # Save the previous frame
                 if prevframe is not None:
                     prevframe = color
