@@ -36,6 +36,13 @@ Capture tuning options (mainly for `--cap`): `--backend`, `--fourcc`, `--width`,
 
 Example (1080p60, YUY2, DirectShow): `python videodiff.py --cap 1 --backend dshow --fourcc YUY2 --width 1920 --height 1080 --fps 60 -d`
 
+## GUI
+
+```
+pip install -r requirements.txt
+python videodiff_gui.py
+```
+
 ## Requirements
 
 - Python >= 3.8

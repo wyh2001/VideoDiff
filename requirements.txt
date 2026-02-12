@@ -6,3 +6,6 @@ numpy >= 1.22.0
 
 # util/video.py: 1
 opencv_python >= 4.11.0.86
+
+# videodiff_gui.py: 9
+dearpygui >= 2.1.1
