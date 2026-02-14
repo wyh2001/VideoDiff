@@ -74,7 +74,7 @@ def main():
             "--backend",
             type=str,
             default="any",
-            choices=("any", "msmf", "dshow", "ffmpeg", "gstreamer", "v4l2"),
+            choices=("any", "msmf", "dshow", "gstreamer", "v4l2"),
             help="VideoCapture backend preference",
             )
     group = parser.add_mutually_exclusive_group()

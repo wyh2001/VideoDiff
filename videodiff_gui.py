@@ -19,7 +19,7 @@ CLI_SCRIPT = PROJECT_ROOT / "videodiff.py"
 
 DITHERING_METHODS = ["r", "g", "b", "a", "m", "n"]
 IMAGE_METHODS = ["r", "g", "b", "a", "m"]
-BACKENDS = ["any", "msmf", "dshow", "ffmpeg", "gstreamer", "v4l2"]
+BACKENDS = ["any", "msmf", "dshow", "gstreamer", "v4l2"]
 
 VIDEO_FILE_FILTER = (
     "Video files (*.avi *.mp4 *.mkv *.mov *.ts)"

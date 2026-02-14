@@ -9,7 +9,6 @@ def backend_id_from_name(name):
         "any": getattr(cv2, "CAP_ANY", 0),
         "msmf": getattr(cv2, "CAP_MSMF", None),
         "dshow": getattr(cv2, "CAP_DSHOW", None),
-        "ffmpeg": getattr(cv2, "CAP_FFMPEG", None),
         "gstreamer": getattr(cv2, "CAP_GSTREAMER", None),
         "v4l2": getattr(cv2, "CAP_V4L2", None),
     }
