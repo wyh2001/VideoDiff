@@ -42,6 +42,7 @@ Example (1080p60, YUY2, DirectShow): `python videodiff.py --cap 1 --backend dsho
 pip install -r requirements.txt
 python videodiff_gui.py
 ```
+<img width="500" alt="GUI Screenshot" src="https://github.com/user-attachments/assets/9e16ce4b-9432-45ca-be34-5272627fbfd5" />
 
 ## Requirements
 
